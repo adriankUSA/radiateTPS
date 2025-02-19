@@ -1,14 +1,14 @@
 from flask import Flask
-from flask_cors import CORS  # Import CORS
-from application.config import config
+from flask_cors import CORS  # For frontend compatibility
+from application.routes.main import main  # Import the main route
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(config)
 
-    CORS(app)  # Enable CORS
+    # Enable CORS (for frontend access)
+    CORS(app)
 
-    from application.routes.main import main
-    app.register_blueprint(main)
+    # Register Blueprints
+    app.register_blueprint(main)  # Ensure this is correct
 
     return app
