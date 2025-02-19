@@ -1,10 +1,16 @@
-from flask import Flask, jsonify, send_file
+import sys
 import os
-import numpy as np
-import matplotlib.pyplot as plt
+
+sys.path.append(r"C:\opentps\opentps_core")
+
 from opentps.core.data.images import CTImage
+print("OpenTPS successfully imported!")
 from opentps.core.data.plan import PhotonPlanDesign
 from opentps.core.processing.doseCalculation.protons.mcsquareDoseCalculator import MCsquareDoseCalculator
+
+from flask import Flask, jsonify, send_file
+import numpy as np
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 

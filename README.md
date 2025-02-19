@@ -16,6 +16,6 @@ Mac/Linux: source backend\venv/bin/activate
     pip install -r requirements.txt
 
 5. Whenever a new package is installed, run: 
-    pip freeze >> backend/requirements.txt
-    This one overrides it pip freeze > backend/requirements.txt
+    pip freeze >> backend/requirements.txt or
+    This one overwrites it pip freeze > backend/requirements.txt
 

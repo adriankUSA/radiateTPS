@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> RadiateTPS </title>
+    <title>RadiateTPS</title>
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-
 <body>
     <header>
         <h1>RadiateTPS - Treatment Planning System</h1>
@@ -15,13 +13,17 @@
 
     <main>
         <div class="button-container">
-            <button id="loadDataBtn">Load Data</button>
+            <button id="loadDataBtn">Load CT Data</button>
             <button id="computeDoseBtn">Compute Dose</button>
-            <button id="analyzeResultsBtn">Analyze Results</button>
+            <button id="viewResultsBtn">View Results</button>
+        </div>
+
+        <div id="resultDisplay">
+            <img id="doseImage" style="display:none; max-width: 500px;" />
+            <p id="dvhData"></p>
         </div>
     </main>
 
     <script src="assets/js/script.js"></script>
 </body>
-
 </html>
