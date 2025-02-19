@@ -6,10 +6,16 @@ Browser based cancer and radiation treatment planning system based on OpenTPS so
     git clone https://github.com/adriankUSA/radiateTPS.git
 
 2. Create a Virtual Environment: 
-    python -m venv venv
+    python -m venv radiate-venv
 
 3. Activate the environment:
-Windows CMD/VS Code Terminal: venv\Scripts\activate
-Mac/Linux: source venv/bin/activate
+Windows CMD/VS Code Terminal: backend\radiate-venv\Scripts\activate
+Mac/Linux: source backend\venv/bin/activate
 
-4. Install dependencies: pip install -r requirements.txt
+4. Install dependencies: 
+    pip install -r requirements.txt
+
+5. Whenever a new package is installed, run: 
+    pip freeze >> backend/requirements.txt
+    This one overrides it pip freeze > backend/requirements.txt
+
