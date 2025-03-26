@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RadiateTPS</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">RadiateTPS</div>
+        <nav class="nav-links">
+            <a href="#about">About</a>
+            <a href="#examples">Examples</a>
+            <a href="https://github.com/OpenTPS" target="_blank">OpenTPS</a>
+            <button class="login-btn">Log In</button>
+            <button class="signup-btn">Sign Up</button>
+        </nav>
+    </header>
+
+    <main class="homepage">
+        <section class="intro">
+            <h1>Welcome to RadiateTPS</h1>
+            <p>An open-source, web-based Radiation Treatment Planning System powered by OpenTPS.</p>
+            <div class="cta-buttons">
+                <button class="large-btn">Sign Up</button>
+                <button class="large-btn">Log In</button>
+            </div>
+        </section>
+
+        <div id="plotly-ct-dose" style="width: 80%; max-width: 800px; height: 500px; margin: 30px auto;"></div>
+        <div id="plotly-dvh" style="width: 80%; max-width: 800px; height: 400px; margin: 30px auto;"></div>
+        <div id="plotly-example" style="width: 80%; max-width: 800px; height: 400px; margin: 30px auto;"></div>
+    </main>
+
+    <script>
+        async function fetchDoseData() {
+            const response = await fetch('/tutorial/compute_dose');
+            const data = await response.json();
+    
+            const ct = data.ct_slice;
+            const mask = data.mask_slice;
+            const dose = data.dose_slice;
+            const dvh = data.dvh;
+    
+            // CT + Dose + Mask Overlay
+            const layout1 = {
+                title: 'CT Slice with Dose Overlay',
+                xaxis: { title: 'X Axis' },
+                yaxis: { title: 'Y Axis' },
+                showlegend: false
+            };
+    
+            const heatmap = {
+                z: ct,
+                type: 'heatmap',
+                colorscale: 'Greys',
+                showscale: false
+            };
+    
+            const doseMap = {
+                z: dose,
+                type: 'heatmap',
+                colorscale: 'Jet',
+                opacity: 0.5
+            };
+    
+            const maskContour = {
+                z: mask,
+                type: 'contour',
+                line: { color: 'red', width: 2 },
+                showscale: false
+            };
+    
+            Plotly.newPlot('plotly-ct-dose', [heatmap, doseMap, maskContour], layout1);
+    
+            // DVH Plot
+            const layout2 = {
+                title: 'Dose Volume Histogram',
+                xaxis: { title: 'Dose (Gy)' },
+                yaxis: { title: 'Volume (%)', range: [0, 100] }
+            };
+    
+            const dvhTraces = Object.entries(dvh).map(([roi, values]) => ({
+                x: values.dose_values,
+                y: values.volume_percentages,
+                type: 'scatter',
+                mode: 'lines',
+                name: roi
+            }));
+    
+            Plotly.newPlot('plotly-dvh', dvhTraces, layout2);
+        }
+    
+        fetchDoseData();
+    
+        // Simulated placeholder example
+        const z = [];
+        for (let i = 0; i < 20; i++) {
+            const row = [];
+            for (let j = 0; j < 20; j++) {
+                row.push(Math.sin(i / 2) * Math.cos(j / 2) * 10);
+            }
+            z.push(row);
+        }
+    
+        Plotly.newPlot('plotly-example', [{
+            z: z,
+            type: 'heatmap',
+            colorscale: 'Jet'
+        }], {
+            title: 'Simulated Example Heatmap'
+        });
+    </script>
+    
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

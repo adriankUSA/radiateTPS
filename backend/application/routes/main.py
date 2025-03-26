@@ -23,12 +23,6 @@ main = Blueprint("main", __name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ==========================
-# 📤 Main route
-# ==========================
-@main.route("/")
-def home():
-    return jsonify({"message": "Welcome to RadiateTPS!"})
 
 # ==========================
 # 🏥 Patient Management
