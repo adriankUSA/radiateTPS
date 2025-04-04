@@ -28,8 +28,10 @@ export async function fetchDoseData() {
             z: ct,
             type: 'heatmap',
             colorscale: 'Greys',
-            showscale: false
+            showscale: false,
+            opacity: 0.6    // Try 0.6 or 0.7 instead of full opacity
         };
+        
 
         const doseMap = {
             z: dose,
@@ -45,7 +47,7 @@ export async function fetchDoseData() {
             showscale: false
         };
 
-        Plotly.newPlot('plotly-ct-dose', [heatmap, doseMap, maskContour], layout1);
+        Plotly.newPlot('plotly-ct-dose', [heatmap, maskContour, doseMap], layout1);
 
         const layout2 = {
             title: 'Dose Volume Histogram',
