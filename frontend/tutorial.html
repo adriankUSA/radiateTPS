@@ -32,24 +32,18 @@
         <input type="file" id="dicom-folder" webkitdirectory directory multiple>
         <button onclick="uploadDicomFolder()">Upload DICOM Folder</button>
         <h2>Available Datasets & ROI Names</h2>
-        <button id="load-datasets-btn">View Datasets</button>
-        <ul id="roi-list"></ul>
 
         <h2>Choose Dataset</h2>
         <select id="datasetDropdown">
             <option value="" disable selected hidden>-- Select a dataset --</option>
         </select>
-        <button id="load-dataset-btn">Load Selected Dataset</button>
+        <button id="load-dataset-btn" onclick="loadSelectedDataset()">Load Selected Dataset</button>
 
         <ul id="roi-list"></ul> <!-- This will show the ROI names -->
 
-        <h3>Quick Test (Built-in Dataset)</h3>
-        <button onclick="testRois()">Load Built-in ROIs</button>
-        <ul id="test-roi-list"></ul>
-
         <div id="plotly-ct-overlay" style="width: 100%; max-width: 800px; height: auto; margin: 30px auto;"></div>
-        <div id="plotly-ct-dose" style="width: 100%; max-width: 800px; height: auto; margin: 30px auto;"></div>
         <div id="plotly-dvh" style="width: 100%; max-width: 800px; height: auto; margin: 30px auto;"></div>
+        <div id="plotly-ct-dose" style="width: 100%; max-width: 800px; height: auto; margin: 30px auto;"></div>
         <!-- <div id="plotly-example" style="width: 80%; max-width: 800px; height: 400px; margin: 30px auto;"></div> -->
         
 

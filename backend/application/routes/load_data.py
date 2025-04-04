@@ -13,8 +13,9 @@ def load_specific_dataset(dataset_name):  # ✅ Renamed
         if len(data) < 2:
             return jsonify({"error": "Dataset missing RT Struct or CT"}), 400
 
-        rt_struct = data[0]
-        roi_names = rt_struct.getROINames()
+        rt_struct = next((d for d in data if d.__class__.__name__ == "RTStruct"), None)
+
+        roi_names = [contour.name for contour in rt_struct.contours]
 
         return jsonify({
             "dataset": dataset_name,
@@ -38,11 +39,11 @@ def get_rois_for_dataset(dataset_name):
     dataset_path = os.path.join(os.getcwd(), "datasets", dataset_name)
     try:
         data = readData(dataset_path)
-        rt_struct = next((d for d in data if hasattr(d, "getContourByName")), None)
+        rt_struct = next((d for d in data if d.__class__.__name__ == "RTStruct"), None)
         if not rt_struct:
             return jsonify({"error": "RT Struct not found in dataset"}), 400
 
-        roi_names = rt_struct.getROINames()
+        roi_names = [contour.name for contour in rt_struct.contours]
         return jsonify({"roi_names": roi_names})
     except Exception as e:
         return jsonify({"error": str(e)})
