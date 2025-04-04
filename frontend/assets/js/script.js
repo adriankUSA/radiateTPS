@@ -64,6 +64,46 @@ export async function fetchDoseData() {
         };
 
         Plotly.newPlot('plotly-dvh', [dvhPlot], layout2);
+
+        const layoutDoseOverlay = {
+            title: 'CT Slice + Dose + ROI Mask (Dummy Data)',
+            xaxis: { title: 'X Axis', showgrid: false },
+            yaxis: { title: 'Y Axis', showgrid: false },
+            showlegend: false
+        };
+        
+        const ctLayer = {
+            z: ct,
+            type: 'heatmap',
+            colorscale: 'Greys',
+            showscale: false,
+            opacity: 1.0,
+            hoverinfo: 'skip'
+        };
+        
+        const maskLayer = {
+            z: mask,
+            type: 'heatmap',
+            colorscale: [[0, 'rgba(0,0,0,0)'], [1, 'rgba(255,0,0,0.4)']],  // transparent red
+            showscale: false,
+            opacity: 1.0,
+            hoverinfo: 'skip'
+        };
+        
+        const doseLayer = {
+            z: dose,
+            type: 'heatmap',
+            colorscale: 'Jet',
+            showscale: true,
+            opacity: 0.4,
+            colorbar: {
+                title: 'Dose (Gy)'
+            },
+            hoverinfo: 'skip'
+        };
+        
+        Plotly.newPlot('plotly-ct-overlay', [ctLayer, doseLayer, maskLayer], layoutDoseOverlay);
+
         console.log("Finished plotting dose data");
 
     } catch (error) {

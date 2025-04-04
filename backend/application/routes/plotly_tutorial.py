@@ -119,9 +119,9 @@ def compute_dose_example():
     return jsonify({
         "message": "Dose Computation Completed!",
         "image": output_path,
-        "ct_slice": ct_slice[:10],  # Limit for debugging or preview
-        "mask_slice": mask_slice[:10],
-        "dose_slice": dose_slice[:10],
+        "ct_slice": ct_slice,  # Limit for debugging or preview
+        "mask_slice": mask_slice,
+        "dose_slice": dose_slice,
         "dvh": {
             "dose_values": dose_values,
             "volume_percentages": volume_percentages
