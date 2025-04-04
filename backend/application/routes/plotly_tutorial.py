@@ -18,6 +18,11 @@ from opentps.core.io.scannerReader import readScanner
 from opentps.core.processing.imageProcessing.resampler3D import resampleImage3DOnImage3D, resampleImage3D
 from opentps.core.data import DVH
 
+import matplotlib
+matplotlib.use('Agg')  # Use a non-GUI backend before importing pyplot
+import matplotlib.pyplot as plt
+
+
 # Define Blueprint for Plotly-based Tutorial
 plotly_tutorial = Blueprint("plotly_tutorial", __name__)
 

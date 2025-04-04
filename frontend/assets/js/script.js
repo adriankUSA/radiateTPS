@@ -194,27 +194,87 @@ export async function listDatasets() {
 
   export async function loadSelectedDataset() {
     const dropdown = document.getElementById("datasetDropdown");
-    const dataset = dropdown.value;
+    const datasetName = dropdown.value;
+    
+    const response = await fetch(`/load_data/load_dataset?name=${datasetName}`);
+    const result = await response.json();
 
+    if (result.success && result.files) {
+        const fileUrls = result.files;
+
+        // Convert URLs to Blob/File objects
+        const dicomBlobs = await Promise.all(
+            fileUrls.map(async (url) => {
+                const res = await fetch(url);
+                const blob = await res.blob();
+                const fileName = url.split("/").pop();
+                return new File([blob], fileName);
+            })
+        );
+
+        // Display in viewer
+        await loadCTImageViewer(dicomBlobs);
+    }
+}
+
+
+// Core logic: fetch ROI names for a given dataset
+export async function fetchROINames(datasetName) {
+    try {
+        const response = await fetch(`/load_data/datasets/${datasetName}/rois`);
+        const data = await response.json();
+
+        if (data.roi_names) {
+            console.log("ROI names:", data.roi_names);
+            const roiList = document.getElementById("roi-list");
+            roiList.innerHTML = "";
+            data.roi_names.forEach(name => {
+                const li = document.createElement("li");
+                li.textContent = name;
+                roiList.appendChild(li);
+            });
+        } else {
+            console.error("Error loading ROI names:", data.error);
+        }
+    } catch (error) {
+        console.error("Failed to fetch ROI names:", error);
+    }
+}
+
+// Wrapper: fetch using the selected dataset from dropdown
+export function fetchROINamesFromDropdown() {
+    const dataset = document.getElementById("datasetDropdown").value;
     if (!dataset) {
-        alert("Please select a dataset.");
+        alert("Please select a dataset first.");
+        return;
+    }
+    fetchROINames(dataset);
+}
+
+
+// Set external dependencies
+cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
+
+cornerstoneTools.external.cornerstone = cornerstone;
+cornerstoneTools.init();
+
+export async function loadCTImageViewer(files) {
+    const viewer = document.getElementById("dicom-viewer");
+
+    cornerstone.enable(viewer);
+
+    // Load first image in series
+    const imageFile = files.find(file => file.name.endsWith(".dcm") || file.name.endsWith(".IMA"));
+    if (!imageFile) {
+        console.error("No DICOM files found");
         return;
     }
 
-    const response = await fetch(`/load_data/${dataset}`);
-    const data = await response.json();
+    const imageId = cornerstoneWADOImageLoader.wadouri.fileManager.add(imageFile);
+    const image = await cornerstone.loadImage(imageId);
 
-    const ul = document.getElementById("roi-list");
-    ul.innerHTML = "";
-
-    if (data.roi_names) {
-        data.roi_names.forEach(name => {
-            const li = document.createElement("li");
-            li.textContent = name;
-            ul.appendChild(li);
-        });
-    } else {
-        ul.innerHTML = `<li>Error: ${data.error}</li>`;
-    }
+    cornerstone.displayImage(viewer, image);
 }
+
 

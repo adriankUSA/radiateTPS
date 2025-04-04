@@ -25,6 +25,11 @@ from opentps.core.io.scannerReader import readScanner
 from opentps.core.processing.imageProcessing.resampler3D import resampleImage3DOnImage3D, resampleImage3D
 from opentps.core.data import DVH
 
+import matplotlib
+matplotlib.use('Agg')  # Use a non-GUI backend before importing pyplot
+import matplotlib.pyplot as plt
+
+
 # Define Blueprint for reference (not used in main API)
 tutorial = Blueprint("tutorial", __name__)
 
@@ -117,7 +122,7 @@ def compute_dose_example():
     plt.grid(True)
     plt.legend()
     plt.savefig(os.path.join(output_path, 'SimpleDose.png'), format='png')
-    plt.show()
+    # plt.show()
 
     print('D95 = ' + str(target_DVH.D95) + ' Gy')
     print('D5 = ' + str(target_DVH.D5) + ' Gy')

@@ -6,17 +6,33 @@
     <title>RadiateTPS</title>
     <link rel="stylesheet" href="assets/css/styles.css">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <script src="https://unpkg.com/cornerstone-core@2/dist/cornerstone.min.js"></script>
+    <script src="https://unpkg.com/cornerstone-math@0.1.8/dist/cornerstoneMath.min.js"></script>
+    <script src="https://unpkg.com/cornerstone-wado-image-loader@3.0.0/dist/cornerstoneWADOImageLoader.min.js"></script>
+    <script src="https://unpkg.com/dicom-parser@1.8.5/dist/dicomParser.min.js"></script>
+    <script src="https://unpkg.com/cornerstone-tools@4.22.2/dist/cornerstoneTools.min.js"></script>
+
+
 </head>
 <body>
     <header class="navbar">
-        <div class="logo">RadiateTPS</div>
-        <nav class="nav-links">
-            <a href="#about">About</a>
-            <a href="#examples">Examples</a>
-            <a href="https://github.com/OpenTPS" target="_blank">OpenTPS</a>
+        <div class="nav-left">
+            <div class="logo">RadiateTPS</div>
+        </div>
+    
+        <div class="nav-center">
+            <nav class="nav-links">
+                <a href="#about">About</a>
+                <a href="#examples">Examples</a>
+                <a href="https://github.com/OpenTPS" target="_blank">OpenTPS</a>
+            </nav>
+        </div>
+    
+        <div class="nav-right auth-buttons">
             <button class="login-btn">Log In</button>
             <button class="signup-btn">Sign Up</button>
-        </nav>
+        </div>
     </header>
 
     <main class="homepage">
@@ -29,27 +45,32 @@
             </div>
         </section>
 
-        <input type="file" id="dicom-folder" webkitdirectory directory multiple>
-        <button onclick="uploadDicomFolder()">Upload DICOM Folder</button>
-        <h2>Available Datasets & ROI Names</h2>
-        <button id="load-datasets-btn">View Datasets</button>
-        <ul id="roi-list"></ul>
+        <div class="dicom-upload">
+            <input type="file" id="dicom-folder" webkitdirectory directory multiple hidden>
+            <label for="dicom-folder" class="file-upload-label">Select DICOM Folder</label>
+            <button onclick="uploadDicomFolder()" class="file-upload-label">Upload DICOM Folder</button>
+        </div>
+        
 
         <h2>Choose Dataset</h2>
         <select id="datasetDropdown">
             <option value="" disable selected hidden>-- Select a dataset --</option>
         </select>
-        <button id="load-dataset-btn">Load Selected Dataset</button>
+        <button onclick="loadSelectedDataset()">Load Dataset & ROIs</button>
 
         <ul id="roi-list"></ul> <!-- This will show the ROI names -->
 
-        <h3>Quick Test (Built-in Dataset)</h3>
-        <button onclick="testRois()">Load Built-in ROIs</button>
-        <ul id="test-roi-list"></ul>
+        <button onclick="startDicomViewer()">View CT Scan</button>
 
-        <div id="plotly-ct-overlay" style="width: 100%; max-width: 800px; height: auto; margin: 30px auto;"></div>
-        <div id="plotly-ct-dose" style="width: 100%; max-width: 800px; height: auto; margin: 30px auto;"></div>
-        <div id="plotly-dvh" style="width: 100%; max-width: 800px; height: auto; margin: 30px auto;"></div>
+
+        <div id="plotly-ct-overlay" class="plotly-chart"></div>
+        <div id="plotly-dvh" class="plotly-chart"></div>
+        <div id="plotly-ct-dose" class="plotly-chart"></div>
+
+        <div id="dicom-viewer" style="width: 512px; height: 512px; margin: 40px auto; background-color: black;"></div>
+
+        
+    
         <!-- <div id="plotly-example" style="width: 80%; max-width: 800px; height: 400px; margin: 30px auto;"></div> -->
         
 
@@ -60,18 +81,34 @@
             fetchDoseData,
             loadSelectedDataset,
             listDatasets,
-            uploadDicomFolder
+            uploadDicomFolder,
+            fetchROINames,
+            fetchROINamesFromDropdown,
+            loadCTImageViewer
         } from "./assets/js/script.js";
 
         window.fetchDoseData = fetchDoseData;
         window.loadSelectedDataset = loadSelectedDataset;
         window.listDatasets = listDatasets;
         window.uploadDicomFolder = uploadDicomFolder;
+        window.fetchROINamesFromDropdown = fetchROINamesFromDropdown;
+        window.uploadDicomFolder = uploadDicomFolder;
+
 
         window.onload = () => {
             fetchDoseData();
             listDatasets(); // optional, still works!
         };
+
+        window.startDicomViewer = async () => {
+            const files = [...document.getElementById("dicom-folder").files];
+            if (files.length > 0) {
+                await loadCTImageViewer(files);
+            } else {
+                alert("Please upload a DICOM folder first.");
+            }
+        };
+
     </script>
     
     
