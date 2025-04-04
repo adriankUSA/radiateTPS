@@ -29,91 +29,49 @@
             </div>
         </section>
 
+        <input type="file" id="dicom-folder" webkitdirectory directory multiple>
+        <button onclick="uploadDicomFolder()">Upload DICOM Folder</button>
+        <h2>Available Datasets & ROI Names</h2>
+        <button id="load-datasets-btn">View Datasets</button>
+        <ul id="roi-list"></ul>
+
+        <h2>Choose Dataset</h2>
+        <select id="datasetDropdown">
+            <option value="">-- Select a dataset --</option>
+        </select>
+        <button id="load-dataset-btn">Load Selected Dataset</button>
+
+        <ul id="roi-list"></ul> <!-- This will show the ROI names -->
+
+        <h3>Quick Test (Built-in Dataset)</h3>
+        <button onclick="testRois()">Load Built-in ROIs</button>
+        <ul id="test-roi-list"></ul>
+
         <div id="plotly-ct-dose" style="width: 80%; max-width: 800px; height: 500px; margin: 30px auto;"></div>
         <div id="plotly-dvh" style="width: 80%; max-width: 800px; height: 400px; margin: 30px auto;"></div>
         <div id="plotly-example" style="width: 80%; max-width: 800px; height: 400px; margin: 30px auto;"></div>
     </main>
 
-    <script>
-        async function fetchDoseData() {
-            const response = await fetch('/tutorial/compute_dose');
-            const data = await response.json();
-    
-            const ct = data.ct_slice;
-            const mask = data.mask_slice;
-            const dose = data.dose_slice;
-            const dvh = data.dvh;
-    
-            // CT + Dose + Mask Overlay
-            const layout1 = {
-                title: 'CT Slice with Dose Overlay',
-                xaxis: { title: 'X Axis' },
-                yaxis: { title: 'Y Axis' },
-                showlegend: false
-            };
-    
-            const heatmap = {
-                z: ct,
-                type: 'heatmap',
-                colorscale: 'Greys',
-                showscale: false
-            };
-    
-            const doseMap = {
-                z: dose,
-                type: 'heatmap',
-                colorscale: 'Jet',
-                opacity: 0.5
-            };
-    
-            const maskContour = {
-                z: mask,
-                type: 'contour',
-                line: { color: 'red', width: 2 },
-                showscale: false
-            };
-    
-            Plotly.newPlot('plotly-ct-dose', [heatmap, doseMap, maskContour], layout1);
-    
-            // DVH Plot
-            const layout2 = {
-                title: 'Dose Volume Histogram',
-                xaxis: { title: 'Dose (Gy)' },
-                yaxis: { title: 'Volume (%)', range: [0, 100] }
-            };
-    
-            const dvhTraces = Object.entries(dvh).map(([roi, values]) => ({
-                x: values.dose_values,
-                y: values.volume_percentages,
-                type: 'scatter',
-                mode: 'lines',
-                name: roi
-            }));
-    
-            Plotly.newPlot('plotly-dvh', dvhTraces, layout2);
-        }
-    
-        fetchDoseData();
-    
-        // Simulated placeholder example
-        const z = [];
-        for (let i = 0; i < 20; i++) {
-            const row = [];
-            for (let j = 0; j < 20; j++) {
-                row.push(Math.sin(i / 2) * Math.cos(j / 2) * 10);
-            }
-            z.push(row);
-        }
-    
-        Plotly.newPlot('plotly-example', [{
-            z: z,
-            type: 'heatmap',
-            colorscale: 'Jet'
-        }], {
-            title: 'Simulated Example Heatmap'
+    <script type="module">
+        import { listDatasets, loadSelectedDataset, loadDatasets, fetchDoseData, uploadDicomFolder } from './assets/js/script.js';
+        
+        document.getElementById("dicom-folder").addEventListener("change", () => {
+            uploadDicomFolder();
         });
+    
+        
+
+        window.onload = () => {
+            fetchDoseData();
+            listDatasets();
+        };
+
+        window.loadSelectedDataset = loadSelectedDataset;
+        window.loadDatasets = loadDatasets;
+
     </script>
     
     <script src="assets/js/script.js"></script>
+    
 </body>
 </html>

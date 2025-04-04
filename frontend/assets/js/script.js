@@ -1,15 +1,173 @@
-document.getElementById("loadDataBtn").addEventListener("click", function() {
-    fetch("http://127.0.0.1:5000/ct")
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message); // Show the response message
-        })
-        .catch(error => console.error("Error:", error));
+
+export async function fetchDoseData() {
+    console.log("Running fetchDoseData");
+    try {
+        const response = await fetch('/plotly/compute_dose');
+        const data = await response.json();
+
+        const ct = data.ct_slice;
+        const mask = data.mask_slice;
+        const dose = data.dose_slice;
+        const dvh = data.dvh;
+
+        const layout1 = {
+            title: 'CT Slice with Dose Overlay',
+            xaxis: { title: 'X Axis' },
+            yaxis: { title: 'Y Axis' },
+            showlegend: false
+        };
+
+        const heatmap = {
+            z: ct,
+            type: 'heatmap',
+            colorscale: 'Greys',
+            showscale: false
+        };
+
+        const doseMap = {
+            z: dose,
+            type: 'heatmap',
+            colorscale: 'Jet',
+            opacity: 0.5
+        };
+
+        const maskContour = {
+            z: mask,
+            type: 'contour',
+            line: { color: 'red', width: 2 },
+            showscale: false
+        };
+
+        Plotly.newPlot('plotly-ct-dose', [heatmap, doseMap, maskContour], layout1);
+
+        const layout2 = {
+            title: 'Dose Volume Histogram',
+            xaxis: { title: 'Dose (Gy)' },
+            yaxis: { title: 'Volume (%)' }
+        };
+
+        const dvhPlot = {
+            x: dvh.dose_values,
+            y: dvh.volume_percentages,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Target ROI'
+        };
+
+        Plotly.newPlot('plotly-dvh', [dvhPlot], layout2);
+    } catch (error) {
+        console.error("Error fetching dose data:", error);
+    }
+}
+
+export async function uploadDicomFolder() {
+    const input = document.getElementById("dicom-folder");
+    const formData = new FormData();
+    for (let file of input.files) {
+        formData.append("dicom_folder", file);
+    }
+
+    const res = await fetch("/roi/upload_dicom", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+    const ul = document.getElementById("roi-list");
+    ul.innerHTML = "";
+    if (data.roi_names) {
+        data.roi_names.forEach(name => {
+            const li = document.createElement("li");
+            li.textContent = name;
+            ul.appendChild(li);
+        });
+    } else {
+        ul.innerHTML = `<li>Error: ${data.error}</li>`;
+    }
+}
+
+export async function loadDatasets() {
+    const ul = document.getElementById("dataset-list");
+    ul.innerHTML = "Loading...";
+
+    try {
+        const res = await fetch("/load_data/datasets");
+        const data = await res.json();
+
+        ul.innerHTML = ""; // Clear loading message
+
+        if (data.datasets) {
+            data.datasets.forEach(name => {
+                const li = document.createElement("li");
+                li.textContent = name;
+                li.onclick = () => alert(`Selected dataset: ${name}`);
+                ul.appendChild(li);
+            });
+        } else {
+            ul.innerHTML = `<li>Error: ${data.error}</li>`;
+        }
+    } catch (err) {
+        console.error("Failed to load datasets", err);
+        ul.innerHTML = `<li>Fetch error</li>`;
+    }
+}
+
+export async function listDatasets() {
+    const response = await fetch('/load_data/datasets');
+    const data = await response.json();
+  
+    const dropdown = document.getElementById("datasetDropdown");
+    dropdown.innerHTML = "";
+  
+    if (data.datasets) {
+      data.datasets.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        dropdown.appendChild(option);
+      });
+    } else {
+      console.error("Error loading datasets:", data.error);
+    }
+  }
+  
+
+  export async function loadSelectedDataset() {
+    const dropdown = document.getElementById("datasetDropdown");
+    const dataset = dropdown.value;
+
+    if (!dataset) {
+        alert("Please select a dataset.");
+        return;
+    }
+
+    const response = await fetch(`/load_data/${dataset}`);
+    const data = await response.json();
+
+    const ul = document.getElementById("roi-list");
+    ul.innerHTML = "";
+
+    if (data.roi_names) {
+        data.roi_names.forEach(name => {
+            const li = document.createElement("li");
+            li.textContent = name;
+            ul.appendChild(li);
+        });
+    } else {
+        ul.innerHTML = `<li>Error: ${data.error}</li>`;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const dicomInput = document.getElementById("dicom-folder");
+    if (dicomInput) {
+        dicomInput.addEventListener("change", uploadDicomFolder);
+    }
+
+    document.getElementById("load-datasets-btn").addEventListener("click", loadDatasets);
+    document.getElementById("load-dataset-btn").addEventListener("click", loadSelectedDataset);
+
+    fetchDoseData();
+    listDatasets();  // Optional, if you want to populate dropdown on page load
 });
 
-
-document.getElementById("viewResultsBtn").addEventListener("click", function() {
-    let imgElement = document.getElementById("doseImage");
-    imgElement.src = "http://127.0.0.1:5000/get_image";
-    imgElement.style.display = "block";
-});

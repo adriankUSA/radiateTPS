@@ -1,0 +1,49 @@
+from flask import Blueprint, request, jsonify
+import os
+from opentps.core.io.dataLoader import readData
+
+load_data = Blueprint("load_data", __name__)
+
+@load_data.route("/<dataset_name>", methods=["GET"])
+def load_specific_dataset(dataset_name):  # ✅ Renamed
+    try:
+        dataset_dir = os.path.join(os.getcwd(), "datasets", dataset_name)
+        data = readData(dataset_dir)
+
+        if len(data) < 2:
+            return jsonify({"error": "Dataset missing RT Struct or CT"}), 400
+
+        rt_struct = data[0]
+        roi_names = rt_struct.getROINames()
+
+        return jsonify({
+            "dataset": dataset_name,
+            "roi_names": roi_names,
+            "message": f"{dataset_name} loaded successfully!"
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@load_data.route("/datasets", methods=["GET"])
+def list_datasets():
+    datasets_path = os.path.join(os.getcwd(), "datasets")
+    try:
+        folders = [f for f in os.listdir(datasets_path) if os.path.isdir(os.path.join(datasets_path, f))]
+        return jsonify({"datasets": folders})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@load_data.route("/datasets/<dataset_name>/rois", methods=["GET"])
+def get_rois_for_dataset(dataset_name):
+    dataset_path = os.path.join(os.getcwd(), "datasets", dataset_name)
+    try:
+        data = readData(dataset_path)
+        rt_struct = next((d for d in data if hasattr(d, "getContourByName")), None)
+        if not rt_struct:
+            return jsonify({"error": "RT Struct not found in dataset"}), 400
+
+        roi_names = rt_struct.getROINames()
+        return jsonify({"roi_names": roi_names})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
