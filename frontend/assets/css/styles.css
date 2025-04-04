@@ -11,11 +11,24 @@ body {
 /* Navbar */
 .navbar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     padding: 15px 30px;
     background-color: #293556;
-}
+    flex-wrap: wrap;
+  }
+  
+  .nav-left,
+  .nav-right {
+    flex: 0 0 auto;
+  }
+  
+  .nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  
 
 .logo {
     font-size: 24px;
