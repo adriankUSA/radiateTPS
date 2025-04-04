@@ -37,7 +37,7 @@
 
         <h2>Choose Dataset</h2>
         <select id="datasetDropdown">
-            <option value="">-- Select a dataset --</option>
+            <option value="" disable selected hidden>-- Select a dataset --</option>
         </select>
         <button id="load-dataset-btn">Load Selected Dataset</button>
 
@@ -53,25 +53,24 @@
     </main>
 
     <script type="module">
-        import { listDatasets, loadSelectedDataset, loadDatasets, fetchDoseData, uploadDicomFolder } from './assets/js/script.js';
-        
-        document.getElementById("dicom-folder").addEventListener("change", () => {
-            uploadDicomFolder();
-        });
-    
-        
+        import {
+            fetchDoseData,
+            loadSelectedDataset,
+            listDatasets,
+            uploadDicomFolder
+        } from "./assets/js/script.js";
+
+        window.fetchDoseData = fetchDoseData;
+        window.loadSelectedDataset = loadSelectedDataset;
+        window.listDatasets = listDatasets;
+        window.uploadDicomFolder = uploadDicomFolder;
 
         window.onload = () => {
             fetchDoseData();
-            listDatasets();
+            listDatasets(); // optional, still works!
         };
-
-        window.loadSelectedDataset = loadSelectedDataset;
-        window.loadDatasets = loadDatasets;
-
     </script>
     
-    <script src="assets/js/script.js"></script>
     
 </body>
 </html>

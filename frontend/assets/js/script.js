@@ -3,7 +3,14 @@ export async function fetchDoseData() {
     console.log("Running fetchDoseData");
     try {
         const response = await fetch('/plotly/compute_dose');
+
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
         const data = await response.json();
+
+        console.log("Received dose data:", data);
 
         const ct = data.ct_slice;
         const mask = data.mask_slice;
@@ -55,6 +62,8 @@ export async function fetchDoseData() {
         };
 
         Plotly.newPlot('plotly-dvh', [dvhPlot], layout2);
+        console.log("Finished plotting dose data");
+
     } catch (error) {
         console.error("Error fetching dose data:", error);
     }
@@ -118,6 +127,15 @@ export async function listDatasets() {
   
     const dropdown = document.getElementById("datasetDropdown");
     dropdown.innerHTML = "";
+
+    // Default placeholder option
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "-- Select a dataset --";
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    defaultOption.hidden = true;
+    dropdown.appendChild(defaultOption);
   
     if (data.datasets) {
       data.datasets.forEach(name => {
@@ -157,17 +175,4 @@ export async function listDatasets() {
         ul.innerHTML = `<li>Error: ${data.error}</li>`;
     }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    const dicomInput = document.getElementById("dicom-folder");
-    if (dicomInput) {
-        dicomInput.addEventListener("change", uploadDicomFolder);
-    }
-
-    document.getElementById("load-datasets-btn").addEventListener("click", loadDatasets);
-    document.getElementById("load-dataset-btn").addEventListener("click", loadSelectedDataset);
-
-    fetchDoseData();
-    listDatasets();  // Optional, if you want to populate dropdown on page load
-});
 

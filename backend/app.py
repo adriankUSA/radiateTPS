@@ -28,9 +28,9 @@ def serve_static_files(path):
 def tutorial_page():
     return send_from_directory(app.static_folder, "tutorial.html")
 
-@app.route("/tutorial2.html")
-def tutorial_page_2():
-    return send_from_directory(app.static_folder, "tutorial2.html")
+# @app.route("/tutorial2.html")
+# def tutorial_page_2():
+    # return send_from_directory(app.static_folder, "tutorial2.html")
 
 from application.routes.load_data import load_data
 app.register_blueprint(load_data, url_prefix="/load_data")
