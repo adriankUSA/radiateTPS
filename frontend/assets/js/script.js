@@ -18,7 +18,7 @@ export async function fetchDoseData() {
         const dvh = data.dvh;
 
         const layout1 = {
-            title: 'CT Slice with Dose Overlay',
+            title: 'CT with ROI',
             xaxis: { title: 'X Axis' },
             yaxis: { title: 'Y Axis' },
             showlegend: false
@@ -66,7 +66,7 @@ export async function fetchDoseData() {
         Plotly.newPlot('plotly-dvh', [dvhPlot], layout2);
 
         const layoutDoseOverlay = {
-            title: 'CT Slice + Dose + ROI Mask (Dummy Data)',
+            title: 'CT Slice + Dose Distribution + ROI Contour',
             xaxis: { title: 'X Axis', showgrid: false },
             yaxis: { title: 'Y Axis', showgrid: false },
             showlegend: false
