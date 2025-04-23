@@ -223,3 +223,10 @@ ul#test-roi-list {
     text-align: center;
 }
 
+#create-patient-form input,
+#create-patient-form select {
+    width: 250px;
+    padding: 8px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}

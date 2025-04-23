@@ -237,3 +237,51 @@ export async function listDatasets() {
     }
 }
 
+export function toggleCreatePatientForm() {
+    const form = document.getElementById("create-patient-form");
+    if (form.style.display === "none" || form.style.display === "") {
+      form.style.display = "block";
+    } else {
+      form.style.display = "none";
+    }
+  }
+
+  export async function createPatient() {
+    const id = document.getElementById("patient-id").value.trim();
+    const first = document.getElementById("patient-first-name").value.trim();
+    const middle = document.getElementById("patient-middle-name").value.trim();
+    const last = document.getElementById("patient-last-name").value.trim();
+    const birthDate = document.getElementById("patient-dob").value;
+    const sex = document.getElementById("patient-sex").value;
+
+    const name = `${first} ${middle} ${last}`.replace(/\s+/g, ' ').trim();
+
+    const payload = { id, name, birthDate, sex };
+
+    const response = await fetch("/patients/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    if (response.ok) {
+        alert("Patient created successfully!");
+        loadPatients(); // reload patient list if visible
+        document.getElementById("patient-form").reset();
+    } else {
+        alert("Error creating patient.");
+    }
+}
+
+
+export async function loadPatients() {
+    const response = await fetch("/patients/load");
+    const patients = await response.json();
+    const list = document.getElementById("patient-list");
+    list.innerHTML = "";
+    patients.forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = `${p.name} (ID: ${p.id}, DOB: ${p.birthDate}, Sex: ${p.sex})`;
+        list.appendChild(li);
+    });
+}

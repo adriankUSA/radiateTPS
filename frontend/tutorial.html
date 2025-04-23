@@ -37,6 +37,45 @@
             </div>
         </section>
 
+        <h2>Manage Patients</h2>
+
+        <div class="patient-actions">
+            <button onclick="toggleCreatePatientForm()">Create Patient</button>
+            <button onclick="loadPatients()">Load Patient</button>
+        </div>
+
+        <!-- Hidden Patient Creation Form -->
+        <div id="create-patient-form" style="display: none; margin-top: 20px;">
+      
+          <label for="patient-first-name">First Name:</label>
+          <input type="text" id="patient-first-name" placeholder="e.g., John">
+      
+          <label for="patient-middle-name">Middle Name:</label>
+          <input type="text" id="patient-middle-name" placeholder="e.g., A.">
+          <br><br>
+      
+          <label for="patient-last-name">Last Name:</label>
+          <input type="text" id="patient-last-name" placeholder="e.g., Doe">
+
+          <label for="patient-id">Patient ID:</label>
+          <input type="text" id="patient-id" placeholder="e.g., 001">
+          <br><br>
+      
+          <label for="patient-dob">Birth Date:</label>
+          <input type="date" id="patient-dob">
+            <select id="patient-sex">
+                <option value="">Sex</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+            </select><br><br>
+            <button onclick="createPatient()">Save Patient</button>
+        </div>
+
+        <!-- Display Loaded Patients -->
+        <ul id="patient-list" style="margin-top: 20px;"></ul>
+
+
+
         <input type="file" id="dicom-folder" webkitdirectory directory multiple>
         <button onclick="uploadDicomFolder()">Upload DICOM Folder</button>
         <h2>Available Datasets & ROI Names</h2>
@@ -62,13 +101,19 @@
             fetchDoseData,
             loadSelectedDataset,
             listDatasets,
-            uploadDicomFolder
+            uploadDicomFolder,
+            toggleCreatePatientForm,
+            createPatient,
+            loadPatients
         } from "./assets/js/script.js";
 
         window.fetchDoseData = fetchDoseData;
         window.loadSelectedDataset = loadSelectedDataset;
         window.listDatasets = listDatasets;
         window.uploadDicomFolder = uploadDicomFolder;
+        window.toggleCreatePatientForm = toggleCreatePatientForm;
+        window.createPatient = createPatient;
+        window.loadPatients = loadPatients;
 
         window.onload = () => {
             fetchDoseData();

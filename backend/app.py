@@ -3,6 +3,7 @@ from flask import Flask, send_from_directory
 from application.routes.main import main
 from application.routes.tutorial1 import tutorial
 from application.routes.plotly_tutorial import plotly_tutorial
+from application.routes.patient_routes import patient_routes
 
 # Get absolute path to the frontend folder
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend"))
@@ -13,6 +14,7 @@ app = Flask(__name__, static_folder=frontend_path, static_url_path="")
 app.register_blueprint(main)
 app.register_blueprint(tutorial, url_prefix="/tutorial")
 app.register_blueprint(plotly_tutorial, url_prefix="/plotly")
+app.register_blueprint(patient_routes, url_prefix="/patients")
 
 # Serve index.html at root
 @app.route("/")
