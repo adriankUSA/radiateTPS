@@ -20,17 +20,29 @@ export async function fetchDoseData() {
         const layout1 = {
             title: 'CT with ROI',
             xaxis: { title: 'X Axis' },
-            yaxis: { title: 'Y Axis' },
+            yaxis: {
+                title: 'Y Axis',
+                scaleanchor: 'x',
+                scaleratio: 1,
+                autorange: 'reversed'
+            },
             showlegend: false
         };
+        
 
         const heatmap = {
             z: ct,
             type: 'heatmap',
-            colorscale: 'Greys',
+            zmin: -1000,
+            zmax: 0,
+            colorscale: [
+                [0, 'white'],   // -1000 HU = air
+                [1, 'black']    // 0 HU = water/soft tissue
+            ],
             showscale: false,
-            opacity: 0.6    // Try 0.6 or 0.7 instead of full opacity
+            opacity: 1.0
         };
+        
         
 
         const doseMap = {
@@ -68,9 +80,16 @@ export async function fetchDoseData() {
         const layoutDoseOverlay = {
             title: 'CT Slice + Dose Distribution + ROI Contour',
             xaxis: { title: 'X Axis', showgrid: false },
-            yaxis: { title: 'Y Axis', showgrid: false },
+            yaxis: {
+                title: 'Y Axis',
+                showgrid: false,
+                scaleanchor: 'x',
+                scaleratio: 1,
+                autorange: 'reversed'
+            },
             showlegend: false
         };
+        
         
         const ctLayer = {
             z: ct,
