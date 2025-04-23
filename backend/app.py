@@ -41,5 +41,7 @@ from application.routes.upload_routes import upload_routes
 app.register_blueprint(upload_routes, url_prefix="/uploads")
 
 
+
+
 if __name__ == "__main__":
     app.run(debug=True)
