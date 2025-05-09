@@ -3,14 +3,14 @@ Browser based cancer and radiation treatment planning system based on OpenTPS so
 
 # Setup Instructions
 
-1. Clone the project repository and the OpenTPS repository (I put both of mine towards the root of my C drive)
+1. Clone the project repository and the OpenTPS repository (I put both of mine towards the root of my C drive)  
     git clone https://github.com/adriankUSA/radiateTPS.git  
     git clone https://gitlab.com/openmcsquare/opentps.git 
 
 2. Create a Virtual Environment (I put min in /backend): 
     python -m venv radiate-venv
 
-3. Activate the environment:
+3. Activate the environment:  
     Windows CMD/VS Code Terminal: backend\radiate-venv\Scripts\activate  
     or C:\radiateTPS\backend\radiate-venv\Scripts\activate  
     or Powershell:  
@@ -25,8 +25,8 @@ Browser based cancer and radiation treatment planning system based on OpenTPS so
 4. Install dependencies: 
     pip install -r requirements.txt
 
-5. More dependencies (pydicom, scipy, SimpleITK, matplotlib, numpy, cuda, psutil)
-    pip install pydicom scipy SimpleITK matplotlib numpy
+5. More dependencies (pydicom, scipy, SimpleITK, matplotlib, numpy, cuda, psutil)  
+    pip install pydicom scipy SimpleITK matplotlib numpy  
     pip install cupy-cuda12x psutil
 
     Program/terminal will let you know if there are still any missing dependencies when you try to run the tutorial
