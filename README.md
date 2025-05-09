@@ -4,20 +4,20 @@ Browser based cancer and radiation treatment planning system based on OpenTPS so
 # Setup Instructions
 
 1. Clone the project repository and the OpenTPS repository (I put both of mine towards the root of my C drive)
-    git clone https://github.com/adriankUSA/radiateTPS.git
+    git clone https://github.com/adriankUSA/radiateTPS.git  
     git clone https://gitlab.com/openmcsquare/opentps.git 
 
 2. Create a Virtual Environment (I put min in /backend): 
     python -m venv radiate-venv
 
 3. Activate the environment:
-    Windows CMD/VS Code Terminal: backend\radiate-venv\Scripts\activate
-    or C:\radiateTPS\backend\radiate-venv\Scripts\activate
-    or Powershell:
-    & "C:\radiateTPS\backend\radiate-venv\Scripts\Activate.ps1"
-    Mac/Linux: source backend\venv/bin/activate
+    Windows CMD/VS Code Terminal: backend\radiate-venv\Scripts\activate  
+    or C:\radiateTPS\backend\radiate-venv\Scripts\activate  
+    or Powershell:  
+    & "C:\radiateTPS\backend\radiate-venv\Scripts\Activate.ps1"  
+    Mac/Linux: source backend\venv/bin/activate  
 
-    If you see both (base) and your (venv) active, you should be able to use this command to get rid of (base):
+    If you see both (base) and your (venv) active, you should be able to use this command to get rid of (base):  
     conda deactivate
 
 # Dependencies 
@@ -37,11 +37,11 @@ Browser based cancer and radiation treatment planning system based on OpenTPS so
 # Pathing
 
 7. Pathing (File directory and pathing is a big issue, may need more/different adjustments)
-    Adjust the .env file to manually specify additional paths if needed:
+    Adjust the .env file to manually specify additional paths if needed:  
     PYTHONPATH=C:/opentps/opentps_core
 
-    In /backend/routes/plotly_tutorial.py or /backend/routes/tutorial1.py, you can see this line
-    sys.path.append(r"C:\opentps\opentps_core")
+    In /backend/routes/plotly_tutorial.py or /backend/routes/tutorial1.py, you can see this line  
+    sys.path.append(r"C:\opentps\opentps_core")  
     Adjust as needed
 
 # Running
