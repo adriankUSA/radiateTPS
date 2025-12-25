@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt
 # Define Blueprint for Plotly-based Tutorial
 plotly_tutorial = Blueprint("plotly_tutorial", __name__)
 
-# Example dose computation function
+# EXAMPLE DOSE COMPUTATION FUNCTION
 @plotly_tutorial.route("/compute_dose")
 def compute_dose_example():
     ctCalibration = readScanner(DoseCalculationConfig().scannerFolder)

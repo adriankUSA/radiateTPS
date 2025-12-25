@@ -25,7 +25,6 @@ from opentps.core.io.scannerReader import readScanner
 from opentps.core.processing.imageProcessing.resampler3D import resampleImage3DOnImage3D, resampleImage3D
 from opentps.core.data import DVH
 
-import matplotlib
 matplotlib.use('Agg')  # Use a non-GUI backend before importing pyplot
 import matplotlib.pyplot as plt
 
@@ -53,6 +52,7 @@ def compute_dose_example():
     data[:, 50:, :] = huWater
     ct.imageArray = data
 
+# ROI mask means (Region of Interest Mask, embedded in the image) ->  the region of interest is the area that we are interested in, in this case the tumor
     roi = ROIMask()
     roi.patient = patient
     roi.name = 'TV'
