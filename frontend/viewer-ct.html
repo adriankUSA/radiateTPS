@@ -177,6 +177,7 @@
         let levelValue = 50;
         let slicesWithROI = [];  // Track which slices have ROI data
         let lastLoadedSlicePayload = null;
+        let hasLoadedCTScan = false;  // Track if we've successfully loaded a CT scan - NEVER show placeholder after this
 
         // Load CT scan data
         async function loadCTScan() {
@@ -221,11 +222,17 @@
                     // Load CT image data
                     await loadCTImage(ctScan);
                 } else {
-                    renderPlaceholder();
+                    // Only show placeholder on initial load if no CT scans found
+                    if (!hasLoadedCTScan) {
+                        renderPlaceholder();
+                    }
                 }
             } catch (error) {
                 console.error('Error loading CT scan:', error);
-                renderPlaceholder();
+                // Only show placeholder on initial load
+                if (!hasLoadedCTScan) {
+                    renderPlaceholder();
+                }
             }
         }
 
@@ -234,8 +241,8 @@
             try {
                 if (!ctScan || !ctScan.id) {
                     console.error('Invalid CT scan data');
-                    // Only show placeholder if no CT scan is currently loaded
-                    if (!currentCTData) {
+                    // NEVER show placeholder if we've already loaded a CT scan
+                    if (!hasLoadedCTScan) {
                         renderPlaceholder();
                     }
                     return;
@@ -248,8 +255,8 @@
                 if (!response.ok) {
                     const errorData = await response.json();
                     console.error('Error loading CT slice:', errorData);
-                    // If this is the first load and we have no CT data, show placeholder
-                    if (!currentCTData) {
+                    // NEVER show placeholder if we've already loaded a CT scan
+                    if (!hasLoadedCTScan) {
                         renderPlaceholder();
                     } else {
                         console.warn('⚠️ API error, keeping current CT scan view');
@@ -306,11 +313,13 @@
                         dose_slice: data.dose_slice || null
                     };
                     
+                    // Mark that we've successfully loaded a CT scan
+                    hasLoadedCTScan = true;
                     renderCTView(data.ct_slice, data.mask_slice || null, data.dose_slice || null);
                 } else {
                     console.error('❌ No valid CT slice data received:', data);
-                    // If this is the first load, show placeholder
-                    if (!currentCTData) {
+                    // NEVER show placeholder if we've already loaded a CT scan
+                    if (!hasLoadedCTScan) {
                         renderPlaceholder();
                     } else {
                         console.warn('⚠️ No valid data, keeping current CT scan view');
@@ -318,8 +327,8 @@
                 }
             } catch (error) {
                 console.error('Error loading CT image:', error);
-                // If this is the first load, show placeholder
-                if (!currentCTData) {
+                // NEVER show placeholder if we've already loaded a CT scan
+                if (!hasLoadedCTScan) {
                     renderPlaceholder();
                 } else {
                     console.warn('⚠️ Error loading CT image, keeping current view');
@@ -333,17 +342,24 @@
                 const response = await fetch('/plotly/compute_dose');
                 const data = await response.json();
                 if (data.ct_slice) {
+                    hasLoadedCTScan = true;  // Mark as loaded
                     lastLoadedSlicePayload = {
                         ct_slice: data.ct_slice,
                         mask_slice: data.mask_slice
                     };
                     renderCTView(data.ct_slice, data.mask_slice, null);
                 } else {
-                    renderPlaceholder();
+                    // Only show placeholder if we've never loaded a CT scan
+                    if (!hasLoadedCTScan) {
+                        renderPlaceholder();
+                    }
                 }
             } catch (error) {
                 console.error('Error loading sample data:', error);
-                renderPlaceholder();
+                // Only show placeholder if we've never loaded a CT scan
+                if (!hasLoadedCTScan) {
+                    renderPlaceholder();
+                }
             }
         }
 
@@ -361,12 +377,12 @@
             // CRITICAL: Always validate CT slice data
             if (!ctSlice || !Array.isArray(ctSlice) || ctSlice.length === 0) {
                 console.error('❌ Invalid CT slice data in renderCTView:', ctSlice);
-                // Only show placeholder if we don't have a current CT scan loaded
-                if (!currentCTData) {
-                    console.log('⚠️ Showing placeholder - no CT data and no currentCTData');
+                // NEVER show placeholder if we've already loaded a CT scan
+                if (!hasLoadedCTScan) {
+                    console.log('⚠️ Showing placeholder - no CT data and never loaded before');
                     renderPlaceholder();
                 } else {
-                    console.warn('⚠️ Invalid CT data but keeping current view');
+                    console.warn('⚠️ Invalid CT data but keeping current view - CT scan already loaded');
                 }
                 return;
             }
@@ -374,8 +390,11 @@
             // Validate that ctSlice has valid rows
             if (!ctSlice[0] || !Array.isArray(ctSlice[0]) || ctSlice[0].length === 0) {
                 console.error('❌ CT slice has invalid row structure:', ctSlice[0]);
-                if (!currentCTData) {
+                // NEVER show placeholder if we've already loaded a CT scan
+                if (!hasLoadedCTScan) {
                     renderPlaceholder();
+                } else {
+                    console.warn('⚠️ Invalid row structure but keeping current view - CT scan already loaded');
                 }
                 return;
             }
@@ -537,8 +556,11 @@
                 console.log('✅ Plotly render completed successfully');
             } catch (error) {
                 console.error('❌ Plotly render error:', error);
-                if (!currentCTData) {
+                // NEVER show placeholder if we've already loaded a CT scan
+                if (!hasLoadedCTScan) {
                     renderPlaceholder();
+                } else {
+                    console.warn('⚠️ Plotly render error but keeping current view - CT scan already loaded');
                 }
             }
         }
